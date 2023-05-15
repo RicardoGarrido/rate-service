@@ -1,6 +1,7 @@
 package org.company.services;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.company.currencies.CurrencyDTO;
 import org.company.currencies.CurrencyGetter;
 import org.company.models.Rate;
@@ -8,15 +9,21 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
+@NoArgsConstructor
 public class RateMapper {
-    private final CurrencyGetter currencySrv;
+    private CurrencyGetter currencySrv;
+
     public RateDTO toDTO(Rate entity) {
-        CurrencyDTO currency = this.currencySrv.get(entity.getCurrencyCode());
-        String finalPrice = this.currencySrv.formatPrice(entity.getPrice(), currency);
+        String currencyCode = entity.getCurrencyCode();
+        String finalPrice = null;
+        if (currencyCode != null && !currencyCode.isEmpty()) {
+            CurrencyDTO currency = this.currencySrv.get(currencyCode);
+            finalPrice = this.currencySrv.formatPrice(entity.getPrice(), currency);
+        }
         return RateDTO.builder()
                 .id(entity.getId())
                 .brandId(entity.getBrandId())
-                .currencyCode(entity.getCurrencyCode())
+                .currencyCode(currencyCode)
                 .endDate(entity.getEndDate())
                 .price(entity.getPrice())
                 .productId(entity.getProductId())
@@ -24,6 +31,7 @@ public class RateMapper {
                 .finalPrice(finalPrice)
                 .build();
     }
+
     public Rate toEntity(RateDTO dto) {
         return Rate.builder()
                 .id(dto.getId())

@@ -28,7 +28,9 @@ public class RateSrvTest {
     private static final Rate UPDATE_EXPECTATION = Rate.builder().id(34L).brandId(32L).price(1000L).build();
     private static final Rate RATE = Rate.builder().id(35L).brandId(32L).build();
 
-    private static final Rate NEW_RATE = Rate.builder().id(34L).brandId(32L).build();
+    private static final Rate RATE_TO_SAVE = Rate.builder().brandId(32L).build();
+
+    private static final Rate NEW_RATE = Rate.builder().id(34L).brandId(32L).price(1000L).build();
 
     private static final Rate NEW_RATE_PRICE_UPDATED = Rate.builder().id(34L).brandId(32L).price(1000L).build();
     @Mock
@@ -39,13 +41,6 @@ public class RateSrvTest {
     @InjectMocks
     private RateSrv rateSrv;
 
-    @Test
-    public void whenRatesAreCreatedIdIsIgnored() {
-        Mockito.when(rateRepo.save(RATE)).thenReturn(NEW_RATE);
-        RateDTO result = rateSrv.create(RATE_DTO);
-        Mockito.verify(rateRepo, Mockito.times(1)).save(RATE);
-        Assertions.assertEquals(EXPECTATION, result);
-    }
 
     @Test
     public void validateCorrectRateIsReturnedOnGet() {

@@ -10,6 +10,7 @@
     <url>http://maven.apache.org</url>
     <properties>
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+        <java.version>20</java.version>
     </properties>
     <dependencies>
         <dependency>

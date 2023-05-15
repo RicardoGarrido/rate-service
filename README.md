@@ -1,55 +1,40 @@
-# spring-boot-exercice-1
+# Nombre del Proyecto
 
-Imagina que estamos trabajando en un proyecto para la plataforma de e-commerce de una compañía. Dicha empresa gestiona varias marcas dentro de dicha plataforma.
+El proyecto se ha dividido en 4 módulos para facilitar la escalabilidad. A continuación se describen los módulos y sus funcionalidades principales:
 
-Partiendo de la siguiente infraestructura como base:
+## Core
 
-## Base de datos
+El módulo "Core" contiene las clases y funciones principales del proyecto. Este módulo tiene dependencias con la mayoría de los otros módulos y proporciona la lógica central del proyecto.
 
-Base de datos donde tendremos almacenadas las distintas tarifas que gestionaremos en el servicio
+## Common
 
-### Tabla de tarifas **T_RATES**
+El módulo "Common" contiene interfaces comunes que son utilizadas por varios módulos. Estas interfaces facilitan la comunicación y la integración entre los diferentes componentes del proyecto.
 
-| ID | BRAND_ID | PRODUCT_ID | START_DATE | END_DATE   | PRICE | CURRENCY_CODE |
-|----| -------- | ---------- | ---------- | ---------- | ----- | ------------- |
-| 1  | 1        | 1          | 2022-01-01 | 2022-05-31 | 1550 | EUR           |
-| 2  | 1        | 1          | 2022-06-01 | 2022-12-31 | 1850 | USD           |
-| 3  | 2        | 1          | 2022-01-01 | 2022-05-31 | 2050 | EUR           |
-| 4  | 2        | 1          | 2022-06-01 | 2022-12-31 | 2250 | USD           |
-| 5  | 1        | 2          | 2022-01-01 | 2022-05-31 | 2550 | EUR           |
-| 6  | 1        | 2          | 2022-06-01 | 2022-12-31 | 2850 | USD           |
-| 7  | 2        | 2          | 2022-01-01 | 2022-05-31 | 3050 | EUR           |
-| 8  | 2        | 2          | 2022-06-01 | 2022-12-31 | 3250 | USD           |
-| ...| ...      | ...        | ...        | ...        | ...  | ...           |
+## Integrations
 
-* **ID**: Identificador único de la tarifa
-* **BRAND_ID**: Identificador único de la marca
-* **PRODUCT_ID**: Identificador único del producto
-* **START_DATE**: Fecha de aplicación de la tarifa
-* **END_DATE**: Fecha de fin de aplicación de la tarifa
-* **PRICE**: Precio del producto sin decimales, los decimales deben extraerse del servicio de moneda
-* **CURRENCY_CODE**: ID de la moneda en que está representado el precio
+El módulo "Integrations" incluye una integración realizada con Feign. Esta integración se ha desarrollado para conectar con el módulo "Currencies", que es un módulo independiente con sus propias dependencias.
 
-## Integraciones con servicios externos
+## Currencies
 
-### Servicio de gestión de monedas
+El módulo "Currencies" se centra en la gestión de divisas. Contiene la lógica y las funciones relacionadas con las operaciones de divisas. Este módulo ha sido diseñado de forma aislada, con dependencias independientes y se puede utilizar de manera independiente o integrado con otros módulos según sea necesario.
 
-En el fichero *currency-service-api-rest.yml* viene la especificación OpenAPI de la API del servicio de monedas, que nos proporcionará la información disponible de las monedas dadas de alta en la plataforma. El servicio de tarifas debe consumir dicho servicio para usar dicha información, por lo que se aconseja algún tipo de mecanismo para mockear dicha integración (wiremock,...)
+## Instrucciones de Arranque
 
-# ¿Qué se pide?
-Se pide crear un servicio basado en spring boot que a se conecte a una BBDD postgres inicializada con los datos contenidos en el script *init-db.sql*, que publique un API rest con las siguientes operaciones:
+Sigue los pasos a continuación para ejecutar el proyecto:
 
-* Permitir crear una tarifa nueva
-* Permitir recuperar una tarifa por id, con los precios debidamente formateados y mostrando el código y símbolo de la moneda.
-* Permitir modificar el precio de una tarifa
-* Permitir borrar una tarifa por id
-* Permitir a partir de una fecha, el identificador del producto y el identificador de la marca, recuperar la tarifa a aplicar con los precios correctamente formateados con los decimales proporcionados por el servicio de monedas
+1. Inicializa el archivo `docker-compose.yml` ubicado en la carpeta raíz del proyecto ejecutando el siguiente comando:
 
-# ¿Qué se valorará?
+   ```bash
+   docker-compose up -d
+Esto iniciará los servicios y contenedores necesarios para el proyecto.
 
-* Especificación en OpenAPI de la API del micro de tarifas del ejercicio
-* Estructura del proyecto y codificación clara y comprensible
-* Mínimo un test representativo de los que incluirías
-* Optimización de accesos a base de datos y llamadas al servicio de currencies
-* Se valorará el uso de DDD y arquitectura hexagonal
-* Una resolución reactiva se valorará positivamente
+2. Instala las dependencias del proyecto utilizando Maven. Ejecuta el siguiente comando en la carpeta raíz del proyecto:
+    ```
+   mvn install
+Esto descargará y configurará todas las dependencias necesarias para los módulos.
+
+3. Inicia el módulo **Currencies** ejecutando la clase CurrenciesApp. Este módulo se encarga de establecer el servidor WireMock y configurar los stubs para las llamadas de la API simulada.
+
+4. Finalmente, inicia el módulo **Core** ejecutando la clase RateServiceApp. Este módulo utilizará las dependencias de los otros módulos y ejecutará la lógica principal del proyecto.
+
+Asegúrate de que todos los servicios y dependencias estén correctamente configurados y funcionando antes de ejecutar los módulos individuales.
