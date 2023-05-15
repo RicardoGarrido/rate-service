@@ -1,7 +1,6 @@
 package org.company.services;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.company.currencies.CurrencyDTO;
 import org.company.currencies.CurrencyGetter;
 import org.company.models.Rate;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-@NoArgsConstructor
 public class RateMapper {
     private CurrencyGetter currencySrv;
 

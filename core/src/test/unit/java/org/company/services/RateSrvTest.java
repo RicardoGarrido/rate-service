@@ -1,19 +1,22 @@
 package org.company.services;
 
+import org.company.CurrencySrv;
+import org.company.currencies.CurrencyDTO;
 import org.company.models.Rate;
 import org.company.repositories.RateRepo;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
 public class RateSrvTest {
@@ -35,19 +38,28 @@ public class RateSrvTest {
     private static final Rate NEW_RATE_PRICE_UPDATED = Rate.builder().id(34L).brandId(32L).price(1000L).build();
     @Mock
     private RateRepo rateRepo;
-    @Spy
+
+    private CurrencySrv currencySrv;
+
     private RateMapper rateMapper;
 
-    @InjectMocks
     private RateSrv rateSrv;
 
+    @BeforeEach
+    public void init() {
+        this.currencySrv = Mockito.mock(CurrencySrv.class);
+        this.rateMapper = new RateMapper(this.currencySrv);
+        this.rateSrv = new RateSrv(this.rateRepo, this.rateMapper);
+        Mockito.lenient().when(this.currencySrv.get(any())).thenReturn(new CurrencyDTO("€", "EUR", 2));
+        Mockito.lenient().when(this.currencySrv.formatPrice(any(), any())).thenReturn("2.00€");
+    }
 
     @Test
     public void validateCorrectRateIsReturnedOnGet() {
-            Mockito.when(rateRepo.getReferenceById(32L)).thenReturn(NEW_RATE);
-            RateDTO result = rateSrv.get(32L);
-            Mockito.verify(rateRepo, Mockito.times(1)).getReferenceById(32L);
-            Assertions.assertEquals(EXPECTATION, result);
+        Mockito.when(rateRepo.getReferenceById(32L)).thenReturn(NEW_RATE);
+        RateDTO result = rateSrv.get(32L);
+        Mockito.verify(rateRepo, Mockito.times(1)).getReferenceById(32L);
+        Assertions.assertEquals(EXPECTATION, result);
     }
 
     @Test
