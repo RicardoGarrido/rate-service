@@ -27,14 +27,17 @@ public class CurrencySrv implements CurrencyGetter {
             .logger(new Slf4jLogger(CurrencyClient.class))
             .logLevel(Logger.Level.FULL)
             .target(CurrencyClient.class, "http://localhost:8083/v1/currency");
+
     @Override
     public CurrencyDTO get(String code) {
         return currencyClient.findByCode(code.toLowerCase());
     }
 
-    public String formatPrice(Long Price, CurrencyDTO currency){
-        String pattern = "#." + "#".repeat(currency.getDecimals()) + currency.getSymbol();
+    public String formatPrice(Long price, CurrencyDTO currency) {
+
+        double decimalNumber = (double) price / Math.pow(10, currency.getDecimals());
+        String pattern = "#,##0." + "0".repeat(currency.getDecimals()) + currency.getSymbol();
         NumberFormat numberFormat = new DecimalFormat(pattern, DecimalFormatSymbols.getInstance(Locale.getDefault()));
-        return numberFormat.format(Price);
+        return numberFormat.format(decimalNumber);
     }
 }
