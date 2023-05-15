@@ -1,0 +1,18 @@
+spring:
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    generate-ddl: true
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/rates
+    username: username
+    password: password
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+  flyway:
+    enabled: true
